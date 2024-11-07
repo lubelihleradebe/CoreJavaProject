@@ -2,7 +2,6 @@ package com.nagarro.training.corejavatraining.watcher;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,10 +11,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.concurrent.ConcurrentMap;
 
-import com.nagarro.training.corejavatraining.ConcreteStrategies.NikeFilePattern;
-import com.nagarro.training.corejavatraining.ConcreteStrategies.PumaFilePattern;
 import com.nagarro.training.corejavatraining.Product;
-import com.nagarro.training.corejavatraining.interfaces.FilePatternStrategy;
 
 
 /**
@@ -29,40 +25,40 @@ public class FileWatcher implements Runnable {
     private final Path directoryPath; // Directory to watch
     private final String filePattern; // Regex pattern for file name
     private final ConcurrentMap<String, Product> productMap; // In-memory data structure to store products
-    private  boolean isPumaWatcherStarted = false;
-    private  boolean isNikeWatcherStarted = false;
-
-    public FileWatcher(Path directoryPath, FilePatternStrategy filePatternStrategy, ConcurrentMap<String, Product> productMap) {
+    
+    public FileWatcher(Path directoryPath, String filePattern, ConcurrentMap<String, Product> productMap) {
         this.directoryPath = directoryPath;
-        this.filePattern = filePatternStrategy.getFilePattern(); // Get file pattern from strategy
+        this.filePattern = filePattern; // Get file pattern from strategy
         this.productMap = productMap;
     }
+    
 
     @Override
     public void run() {
         try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
-            directoryPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE); // Register directory with watch service    
+            directoryPath.register(watchService, 
+            StandardWatchEventKinds.ENTRY_CREATE, 
+            StandardWatchEventKinds.ENTRY_MODIFY); // Register directory with watch service    
              
             System.out.println("Watching directory: " + directoryPath);
 
             while(true){
+                System.out.println("hello");
                 WatchKey key = watchService.take(); // Wait for a watch key to be signaled
 
                 for (WatchEvent<?> event : key.pollEvents()) {
                     Path filePath = directoryPath.resolve((Path) event.context()); // Get the file path
                     String fileName = filePath.getFileName().toString(); // Get the file name
 
-                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
-                        // Handle Puma files
-                        if (matchesPattern(fileName, new PumaFilePattern()) && !isPumaWatcherStarted) {
-                            startWatcher(new PumaFilePattern(), "Puma");
-                            isPumaWatcherStarted = true;
+                    System.out.println("Event kind: " + event.kind() + ". File affected: " + fileName);
+
+                    if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
+                        // Handle files
+                        if (filePattern.matches(fileName)) {
+                            System.out.println(fileName);
+                            processFile(filePath);
                         }
-                        // Handle Nike files
-                        else if (matchesPattern(fileName, new NikeFilePattern()) && !isNikeWatcherStarted) {
-                            startWatcher(new NikeFilePattern(), "Nike");
-                            isNikeWatcherStarted = true;
-                        }
+                        
                     }
                 }
                 if (!key.reset()) break; // Reset the key
@@ -72,32 +68,16 @@ public class FileWatcher implements Runnable {
             // TODO: handle exception
         }
     }
-    // Start a new thread to watch the directory for files matching the pattern
-    private void startWatcher(FilePatternStrategy patternStrategy, String brand) {
-        System.out.println(brand + " watcher started. Monitoring files for: " + brand);
-
-        // Process all matching files within the main directory for this brand
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directoryPath, patternStrategy.getFilePattern())) {
-            for (Path filePath : stream) {
-                System.out.println("Found " + brand + " file: " + filePath.getFileName());
-                processFile(filePath, brand);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    // Check if the file name matches the pattern
-    private boolean matchesPattern(String fileName, FilePatternStrategy patternStratery) {
-        return fileName.matches(patternStratery.getFilePattern());
-    }
+   
+    
 
    /**
      * Processes a specific file by reading its content and storing it in the products map.
      * @param filePath the path of the file to process
      * @param brand    the brand associated with the file
      */
-    private void processFile(Path filePath, String brand) {
-        System.out.println("Processing " + brand + " file: " + filePath);
+    private void processFile(Path filePath) {
+        System.out.println(" file: " + filePath);
 
         // Open the file for reading
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
@@ -114,6 +94,7 @@ public class FileWatcher implements Runnable {
                 
                 // Parse the attributes from columns
                 String id = columns.length > 0 ? columns[0] : "";
+                String brand = columns.length > 1 ? columns[1] : "";
                 String color = columns.length > 2 ? columns[2] : "";
                 String size = columns.length > 3 ? columns[3] : "";
                 String type = columns.length > 4 ? columns[4] : "";
