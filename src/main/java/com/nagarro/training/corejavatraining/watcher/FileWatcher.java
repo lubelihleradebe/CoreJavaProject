@@ -11,6 +11,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.concurrent.ConcurrentMap;
 
+import com.nagarro.training.corejavatraining.CompositeKey;
 import com.nagarro.training.corejavatraining.Product;
 
 
@@ -24,18 +25,36 @@ public class FileWatcher implements Runnable {
 
     private final Path directoryPath; // Directory to watch
     private final String filePattern; // Regex pattern for file name
-    private final ConcurrentMap<String, Product> productMap; // In-memory data structure to store products
+    private final ConcurrentMap<CompositeKey, Product> productMap; // In-memory data structure to store products
     
-    public FileWatcher(Path directoryPath, String filePattern, ConcurrentMap<String, Product> productMap) {
+    public FileWatcher(Path directoryPath, String filePattern, ConcurrentMap<CompositeKey, Product> productMap) {
         this.directoryPath = directoryPath;
         this.filePattern = filePattern; // Get file pattern from strategy
         this.productMap = productMap;
+    }
+
+    public void processInitialFiles(){
+        try {
+            Files.list(directoryPath)
+            .filter(path -> path.getFileName().toString().matches(filePattern))
+            .forEach(this::processFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
 
     @Override
     public void run() {
-        try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
+        try {
+
+            // Check if the directory exists and exit if it doesn't return
+            if (!Files.isDirectory(directoryPath)) {
+                return;
+            }
+
+            WatchService watchService = FileSystems.getDefault().newWatchService();
+
             directoryPath.register(watchService, 
             StandardWatchEventKinds.ENTRY_CREATE, 
             StandardWatchEventKinds.ENTRY_MODIFY); // Register directory with watch service    
@@ -54,21 +73,49 @@ public class FileWatcher implements Runnable {
 
                     if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                         // Handle files
-                        if (filePattern.matches(fileName)) {
+                        System.out.println("inside event if statement");
+                        if (fileName.matches(filePattern)) {
                             System.out.println(fileName);
                             processFile(filePath);
                         }
                         
+                    }else{
+                        System.out.println("else");
+                        processFile(filePath);
                     }
+                    
                 }
-                if (!key.reset()) break; // Reset the key
+                if (!key.reset()) break; // Reset the key 
             }
             
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
         }
     }
-   
+    
+    // private List<Product> processFile(Path filePath) {
+    //     List<Product> products = new ArrayList<>();
+    //     try (BufferedReader reader = Files.newBufferedReader(filePath)){
+    //         String line;
+    //         while ((line = reader.readLine()) != null) {
+    //             String[] columns = line.split(",");
+    //             String id = columns.length > 0 ? columns[0] : "";
+    //             String brand = columns.length > 1 ? columns[1] : "";
+    //             String color = columns.length > 2 ? columns[2] : "";
+    //             String size = columns.length > 3 ? columns[3] : "";
+    //             String type = columns.length > 4 ? columns[4] : "";
+    //             double price = columns.length > 5 ? Double.parseDouble(columns[5]) : 0.0;
+    
+    //             Product product = price > 0 ? new Product(brand, color, size, price, type) : new Product(brand, color, size, type);
+    //             products.add(product);
+    //             System.out.println("Loaded products: " + product);  // Debug statement
+    //         }
+    //     } catch (IOException ex) {
+    //         System.err.println("Error reading file: " + filePath + " - " + ex.getMessage());
+    //     }
+    //     return products;
+    // }
+    
     
 
    /**
@@ -78,46 +125,43 @@ public class FileWatcher implements Runnable {
      */
     private void processFile(Path filePath) {
         System.out.println(" file: " + filePath);
-
-        // Open the file for reading
+    
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             String line;
             
-            // Read each line in the file
             while ((line = reader.readLine()) != null) {
-                // Split the line by commas to extract each product attribute
                 String[] columns = line.split(",");
-                if (columns.length < 4) {
+                if (columns.length < 5) {
                     System.err.println("Invalid line format in file: " + filePath + " - " + line);
-                    continue; // Skip lines that do not have enough data
+                    continue;
                 }
-                
-                // Parse the attributes from columns
-                String id = columns.length > 0 ? columns[0] : "";
-                String brand = columns.length > 1 ? columns[1] : "";
+    
+                String id = columns[0];
+                String brand = columns[1];
                 String color = columns.length > 2 ? columns[2] : "";
                 String size = columns.length > 3 ? columns[3] : "";
                 String type = columns.length > 4 ? columns[4] : "";
                 double price = columns.length > 5 ? Double.parseDouble(columns[5]) : 0.0;
-
-                // Create a new Product instance
+    
                 Product product = price > 0 
                     ? new Product(brand, color, size, price, type) 
                     : new Product(brand, color, size, type);
-
-                // Store the product in the productMap using the ID as the key
-                // productMap.putIfAbsent(id, product);
-                productMap.put(id, product);
+    
+                // Use CompositeKey to store in productMap
+                CompositeKey key = new CompositeKey(id, brand);
+                productMap.putIfAbsent(key, product);
+    
                 System.out.println("Product Map size: " + productMap.size());
-                System.out.println("Added product: " + product);  // Debug statement
+                System.out.println("Added product: " + product);
             }
-            
         } catch (IOException ex) {
             System.err.println("Error reading file: " + filePath + " - " + ex.getMessage());
         }
     }
+    
 
-    public ConcurrentMap<String, Product> getProductMap() {
+
+    public ConcurrentMap<CompositeKey, Product> getProductMap() {
         System.out.println("here: "+productMap.size());
         return productMap;
     }
