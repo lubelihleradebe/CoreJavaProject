@@ -1,6 +1,13 @@
 com\nagarro\training\corejavatraining\Interfaces\FilterStrategy.class
 com\nagarro\training\corejavatraining\ConcreteStrategies\ConcreteFilterStrategy.class
-com\nagarro\training\corejavatraining\watcher\FileWatcher.class
+com\nagarro\training\corejavatraining\ConcreteStrategies\BrandFilterCriterion.class
+com\nagarro\training\corejavatraining\ConcreteStrategies\SizeFilterCriterion.class
 com\nagarro\training\corejavatraining\models\Product.class
+com\nagarro\training\corejavatraining\watcher\FileWatcher.class
+com\nagarro\training\corejavatraining\ConcreteStrategies\ColorFilterCriterion.class
+com\nagarro\training\corejavatraining\ConcreteStrategies\TypeFilterCriterion.class
 com\nagarro\training\corejavatraining\models\CompositeKey.class
+com\nagarro\training\corejavatraining\FilterManager.class
 com\nagarro\training\corejavatraining\Main.class
+com\nagarro\training\corejavatraining\Interfaces\FilterCriterion.class
+com\nagarro\training\corejavatraining\UserInputHandler.class

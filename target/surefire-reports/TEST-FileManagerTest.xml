@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="ConcreteFilterStrategyTest" time="0.125" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="FileManagerTest" time="1.286" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="sun.desktop" value="windows"/>
     <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
@@ -61,36 +61,6 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="55.0"/>
   </properties>
-  <testcase name="testFilter_withInvalidCriteriaKey" classname="ConcreteFilterStrategyTest" time="0.053">
-    <system-out><![CDATA[its here 1
-Checking product: Nike
-Checking for color=SomeValue
-Match for color: false
-No products found matching the criteria.
-[]
-]]></system-out>
-  </testcase>
-  <testcase name="testFilter_withValidCriteria" classname="ConcreteFilterStrategyTest" time="0.038">
-    <system-out><![CDATA[the imds size is: 2
-{color=red, size=m}
-its here 2
-Checking product: Nike
-Checking for color=red
-Match for color: true
-Checking for size=m
-Match for size: true
-Checking product: Adidas
-Checking for color=red
-Match for color: false
-And the products are: [Item {id='1', color='Red', size='M', brand='Nike', price=0.0, type=Shoes}]
-]]></system-out>
-  </testcase>
-  <testcase name="testFilter_withNoMatchingCriteria" classname="ConcreteFilterStrategyTest" time="0.001">
-    <system-out><![CDATA[its here 1
-Checking product: Red
-Checking for color=Blue
-Match for color: false
-No products found matching the criteria.
-]]></system-out>
-  </testcase>
+  <testcase name="testFilterProducts_invalidChoice" classname="FileManagerTest" time="1.281"/>
+  <testcase name="testFilterProducts_validChoice" classname="FileManagerTest" time="0.0"/>
 </testsuite>

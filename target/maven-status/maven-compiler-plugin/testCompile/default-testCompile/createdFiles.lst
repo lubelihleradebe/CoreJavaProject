@@ -1,2 +1,4 @@
-FileWatcherTest.class
 ConcreteFilterStrategyTest.class
+FileManagerTest.class
+UserInputHandlerTest.class
+FileWatcherTest.class

@@ -1,6 +1,13 @@
+C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\ConcreteStrategies\BrandFilterCriterion.java
+C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\ConcreteStrategies\ColorFilterCriterion.java
 C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\ConcreteStrategies\ConcreteFilterStrategy.java
+C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\ConcreteStrategies\SizeFilterCriterion.java
+C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\ConcreteStrategies\TypeFilterCriterion.java
+C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\FilterManager.java
+C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\Interfaces\FilterCriterion.java
 C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\Interfaces\FilterStrategy.java
 C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\Main.java
 C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\models\CompositeKey.java
 C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\models\Product.java
+C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\UserInputHandler.java
 C:\Users\lubelihleradebe\Desktop\CoreJavaProject\src\main\java\com\nagarro\training\corejavatraining\watcher\FileWatcher.java

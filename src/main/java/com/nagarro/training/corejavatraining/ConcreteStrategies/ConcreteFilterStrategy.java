@@ -5,61 +5,56 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import com.nagarro.training.corejavatraining.Interfaces.FilterCriterion;
 import com.nagarro.training.corejavatraining.Interfaces.FilterStrategy;
 import com.nagarro.training.corejavatraining.models.CompositeKey;
 import com.nagarro.training.corejavatraining.models.Product;
 
-public class ConcreteFilterStrategy implements FilterStrategy{
+public class ConcreteFilterStrategy implements FilterStrategy {
+
+    private final List<FilterCriterion> filterCriteria;
+
+    // Constructor to accept a list of filter criteria
+    public ConcreteFilterStrategy(List<FilterCriterion> filterCriteria) {
+        this.filterCriteria = filterCriteria;
+    }
 
     @Override
     public List<Product> filter(Map<String, String> criteria, ConcurrentMap<CompositeKey, Product> productMap) {
         List<Product> filteredProducts = new ArrayList<>();
+        System.out.println("its here "+productMap.size());
 
-        // Loop through all products in the map
         for (Product product : productMap.values()) {
             boolean isMatch = true;
-
-            // Loop through each criteria in the map
+        
+            // Debugging output to show each product check
+            System.out.println("Checking product: " + product.getBrand());
+        
+            // Loop through each criterion and apply them
             for (Map.Entry<String, String> entry : criteria.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-
-                // Compare the product's attributes with the criteria
-                switch (key) {
-                    case "color":
-                        if (!product.getColor().equalsIgnoreCase(value)) {
-                            isMatch = false;
-                        }
-                        break;
-                    case "size":
-                        if (!product.getSize().equalsIgnoreCase(value)) {
-                            isMatch = false;
-                        }
-                        break;
-                    case "brand":
-                        if (!product.getBrand().equalsIgnoreCase(value)) {
-                            isMatch = false;
-                        }
-                        break;
-                    default:
-                        System.out.println("Invalid criteria.");
+                System.out.println("Checking for " + key + "=" + value);
+        
+                // Find the matching filter criterion
+                FilterCriterion filterCriterion = getFilterCriterionForKey(key);
+                if (filterCriterion != null) {
+                    boolean match = filterCriterion.matches(product, value);
+                    System.out.println("Match for " + key + ": " + match);
+                    if (!match) {
                         isMatch = false;
                         break;
-                }
-
-                // If any criteria doesn't match, mark the product as non-matching
-                if (!isMatch) {
-                    break; // Stop checking other criteria for this product
+                    }
                 }
             }
-
-            // If all criteria matched, add the product to the filtered list
+        
+            // If the product passes all criteria, add it to the filtered list
             if (isMatch) {
                 filteredProducts.add(product);
             }
         }
+        
 
-        // If no products matched, print a message
         if (filteredProducts.isEmpty()) {
             System.out.println("No products found matching the criteria.");
         }
@@ -67,60 +62,12 @@ public class ConcreteFilterStrategy implements FilterStrategy{
         return filteredProducts;
     }
 
-    
-
-    // @Override
-    // public List<Product> filter(Map<String, String> criteria, ConcurrentMap<CompositeKey, Product> productMap) {
-    //     List<Product> filteredProducts = new ArrayList<>();
-
-    //     // Iterate over all the products
-    //     for(Product product: productMap.values()){
-    //         boolean isMatch = true;
-
-    //         // Check if the product matches the criteria
-    //         for(Map.Entry<String, String> entry: criteria.entrySet()){
-    //             String key = entry.getKey();
-    //             String value = entry.getValue();
-
-    //             // Check if the product has the required attribute
-    //             switch(key){
-    //                 case "color":
-    //                     if(!product.getColor().equalsIgnoreCase(value)){
-    //                         isMatch = false;
-    //                     }
-    //                     break;
-    //                 case "size":
-    //                     if(!product.getSize().equalsIgnoreCase(value)){
-    //                         isMatch = false;
-    //                     }
-    //                     break;
-    //                 case "brand":
-    //                     if(!product.getBrand().equalsIgnoreCase(value)){
-    //                         isMatch = false;
-    //                     }
-    //                     break;
-    //                 default:
-    //                     System.out.println("Invalid criteria.");
-    //                     break;
-    //             }
-    //         }
-
-    //         // If the product matches the criteria, add it to the list
-    //         if(isMatch){
-    //             filteredProducts.add(product);
-                
-                
-    //         }else if(!isMatch) {
-    //             System.out.println("No products found.");
-    //             break;
-    //         }
-    //     }
-    //     System.out.println("Product Map /size: " + productMap.size());
-
-    //     return filteredProducts;
-    // }
-    
+    private FilterCriterion getFilterCriterionForKey(String key) {
+        for (FilterCriterion criterion : filterCriteria) {
+            if (criterion.getClass().getSimpleName().toLowerCase().contains(key.toLowerCase())) {
+                return criterion;
+            }
+        }
+        return null; // No matching criterion found for the key
+    }
 }
-
-
-

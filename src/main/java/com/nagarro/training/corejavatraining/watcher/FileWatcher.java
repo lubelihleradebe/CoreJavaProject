@@ -22,7 +22,7 @@ import com.nagarro.training.corejavatraining.models.Product;
  * in an in-memory data structure so that the write/read operations are optimized with better READ performance
  */
 public class FileWatcher implements Runnable {
-
+    private volatile boolean running = true; // Flag to control whether the thread is running
     private final Path directoryPath; // Directory to watch
     private final String filePattern; // Regex pattern for file name
     private final ConcurrentMap<CompositeKey, Product> productMap; // In-memory data structure to store products
@@ -31,6 +31,7 @@ public class FileWatcher implements Runnable {
         this.directoryPath = directoryPath;
         this.filePattern = filePattern; // Get file pattern from strategy
         this.productMap = productMap;
+        
     }
 
     public void processInitialFiles(){
@@ -61,62 +62,39 @@ public class FileWatcher implements Runnable {
              
             System.out.println("Watching directory: " + directoryPath);
 
-            while(true){
-                System.out.println("hello");
+            while(running){
+                
                 WatchKey key = watchService.take(); // Wait for a watch key to be signaled
 
                 for (WatchEvent<?> event : key.pollEvents()) {
                     Path filePath = directoryPath.resolve((Path) event.context()); // Get the file path
                     String fileName = filePath.getFileName().toString(); // Get the file name
 
-                    System.out.println("Event kind: " + event.kind() + ". File affected: " + fileName);
+            
 
                     if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                         // Handle files
-                        System.out.println("inside event if statement");
+                    
                         if (fileName.matches(filePattern)) {
                             System.out.println(fileName);
                             processFile(filePath);
                         }
                         
                     }else{
-                        System.out.println("else");
+                        
                         processFile(filePath);
                     }
                     
                 }
                 if (!key.reset()) break; // Reset the key 
             }
+            Thread.sleep(1000); // Simulate some work being done
             
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (InterruptedException | IOException e) {
+            Thread.currentThread().interrupt(); // Preserve the interrupt status
         }
     }
-    
-    // private List<Product> processFile(Path filePath) {
-    //     List<Product> products = new ArrayList<>();
-    //     try (BufferedReader reader = Files.newBufferedReader(filePath)){
-    //         String line;
-    //         while ((line = reader.readLine()) != null) {
-    //             String[] columns = line.split(",");
-    //             String id = columns.length > 0 ? columns[0] : "";
-    //             String brand = columns.length > 1 ? columns[1] : "";
-    //             String color = columns.length > 2 ? columns[2] : "";
-    //             String size = columns.length > 3 ? columns[3] : "";
-    //             String type = columns.length > 4 ? columns[4] : "";
-    //             double price = columns.length > 5 ? Double.parseDouble(columns[5]) : 0.0;
-    
-    //             Product product = price > 0 ? new Product(brand, color, size, price, type) : new Product(brand, color, size, type);
-    //             products.add(product);
-    //             System.out.println("Loaded products: " + product);  // Debug statement
-    //         }
-    //     } catch (IOException ex) {
-    //         System.err.println("Error reading file: " + filePath + " - " + ex.getMessage());
-    //     }
-    //     return products;
-    // }
-    
-    
+
 
    /**
      * Processes a specific file by reading its content and storing it in the products map.
@@ -144,27 +122,30 @@ public class FileWatcher implements Runnable {
                 double price = columns.length > 5 ? Double.parseDouble(columns[5]) : 0.0;
     
                 Product product = price > 0 
-                    ? new Product(brand, color, size, price, type) 
-                    : new Product(brand, color, size, type);
+                    ? new Product(id,brand, color, size, price, type) 
+                    : new Product(id,brand, color, size, type);
     
                 // Use CompositeKey to store in productMap
                 CompositeKey key = new CompositeKey(id, brand);
                 productMap.putIfAbsent(key, product);
     
-                System.out.println("Product Map size: " + productMap.size());
-                System.out.println("Added product: " + product);
+                
+                // System.out.println("Added product: " + product);
             }
         } catch (IOException ex) {
             System.err.println("Error reading file: " + filePath + " - " + ex.getMessage());
         }
     }
-    
-
 
     public ConcurrentMap<CompositeKey, Product> getProductMap() {
-        System.out.println("here: "+productMap.size());
         return productMap;
     }
+
+    // Method to stop the thread
+    public void stopWatching() {
+        running = false;
+    }
+    
     
 }
 
