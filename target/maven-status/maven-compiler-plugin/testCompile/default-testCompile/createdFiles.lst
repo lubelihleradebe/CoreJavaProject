@@ -1,4 +1,5 @@
 ConcreteFilterStrategyTest.class
 FileManagerTest.class
 UserInputHandlerTest.class
+FilterLogicTest.class
 FileWatcherTest.class

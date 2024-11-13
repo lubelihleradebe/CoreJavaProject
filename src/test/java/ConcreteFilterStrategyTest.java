@@ -32,7 +32,7 @@ class ConcreteFilterStrategyTest {
         productMap.put(new CompositeKey("1", "Nike"), product1);
         productMap.put(new CompositeKey("2", "Adidas"), product2);
 
-        System.out.println("the imds size is: "+productMap.size());
+        
 
         
 
@@ -42,7 +42,7 @@ class ConcreteFilterStrategyTest {
         criteria.put("size", "m");
 
 
-        System.out.println(criteria);
+    
 
         // Define the filter strategy with color and size criteria
         List<FilterCriterion> criteriaList = Arrays.asList(new ColorFilterCriterion(), new SizeFilterCriterion());
@@ -51,7 +51,7 @@ class ConcreteFilterStrategyTest {
         // Call filter method
         List<Product> filteredProducts = filterStrategy.filter(criteria, productMap);
 
-        System.out.println("And the products are: "+filteredProducts);
+
 
         // Assertions to validate filtering logic
         assertEquals(1, filteredProducts.size(), "Filtered products size should be 1");

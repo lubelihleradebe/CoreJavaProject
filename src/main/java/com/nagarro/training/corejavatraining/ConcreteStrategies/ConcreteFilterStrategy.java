@@ -22,25 +22,24 @@ public class ConcreteFilterStrategy implements FilterStrategy {
     @Override
     public List<Product> filter(Map<String, String> criteria, ConcurrentMap<CompositeKey, Product> productMap) {
         List<Product> filteredProducts = new ArrayList<>();
-        System.out.println("its here "+productMap.size());
+       
 
         for (Product product : productMap.values()) {
             boolean isMatch = true;
         
-            // Debugging output to show each product check
-            System.out.println("Checking product: " + product.getBrand());
+            
         
             // Loop through each criterion and apply them
             for (Map.Entry<String, String> entry : criteria.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                System.out.println("Checking for " + key + "=" + value);
+                
         
                 // Find the matching filter criterion
                 FilterCriterion filterCriterion = getFilterCriterionForKey(key);
                 if (filterCriterion != null) {
                     boolean match = filterCriterion.matches(product, value);
-                    System.out.println("Match for " + key + ": " + match);
+                    
                     if (!match) {
                         isMatch = false;
                         break;
