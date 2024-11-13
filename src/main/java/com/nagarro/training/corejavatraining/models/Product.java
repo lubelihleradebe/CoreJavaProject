@@ -1,4 +1,4 @@
-package com.nagarro.training.corejavatraining;
+package com.nagarro.training.corejavatraining.models;
 
 public class Product {
     // Fields

@@ -11,8 +11,8 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.concurrent.ConcurrentMap;
 
-import com.nagarro.training.corejavatraining.CompositeKey;
-import com.nagarro.training.corejavatraining.Product;
+import com.nagarro.training.corejavatraining.models.CompositeKey;
+import com.nagarro.training.corejavatraining.models.Product;
 
 
 /**

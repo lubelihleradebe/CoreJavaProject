@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
-import com.nagarro.training.corejavatraining.CompositeKey;
-import com.nagarro.training.corejavatraining.Product;
-import com.nagarro.training.corejavatraining.interfaces.FilterStrategy;
+import com.nagarro.training.corejavatraining.Interfaces.FilterStrategy;
+import com.nagarro.training.corejavatraining.models.CompositeKey;
+import com.nagarro.training.corejavatraining.models.Product;
 
 public class ConcreteFilterStrategy implements FilterStrategy{
 

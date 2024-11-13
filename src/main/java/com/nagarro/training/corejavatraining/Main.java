@@ -10,7 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.nagarro.training.corejavatraining.ConcreteStrategies.ConcreteFilterStrategy;
-import com.nagarro.training.corejavatraining.interfaces.FilterStrategy;
+import com.nagarro.training.corejavatraining.Interfaces.FilterStrategy;
+import com.nagarro.training.corejavatraining.models.CompositeKey;
+import com.nagarro.training.corejavatraining.models.Product;
 import com.nagarro.training.corejavatraining.watcher.FileWatcher;
 
 

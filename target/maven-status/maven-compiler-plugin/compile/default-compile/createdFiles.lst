@@ -1,0 +1,6 @@
+com\nagarro\training\corejavatraining\Interfaces\FilterStrategy.class
+com\nagarro\training\corejavatraining\ConcreteStrategies\ConcreteFilterStrategy.class
+com\nagarro\training\corejavatraining\watcher\FileWatcher.class
+com\nagarro\training\corejavatraining\models\Product.class
+com\nagarro\training\corejavatraining\models\CompositeKey.class
+com\nagarro\training\corejavatraining\Main.class
